@@ -1,7 +1,82 @@
-public class Main{
-    public static void main(String[] args) {
-        System.out.println();
-        System.out.println("Hello World");
-        System.out.println("This is a simple java program");
-    }
-}
+from datetime import datetime
+
+class Review:
+    def __init__(self, reviewer_name, review_text, rating, product_id):
+        self.reviewer_name = reviewer_name
+        self.review_text = review_text
+        self.rating = self._validate_rating(rating)  # Validate rating
+        self.product_id = product_id
+        self.review_date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")  # Auto-set review date
+        self.upvotes = 0
+        self.downvotes = 0
+
+    def _validate_rating(self, rating):
+        """Ensure the rating is between 1 and 5."""
+        if 1 <= rating <= 5:
+            return rating
+        else:
+            raise ValueError("Rating must be between 1 and 5.")
+
+    def upvote(self):
+        """Increment upvotes for the review."""
+        self.upvotes += 1
+
+    def downvote(self):
+        """Increment downvotes for the review."""
+        self.downvotes += 1
+
+    def display_review(self):
+        """Display the review details."""
+        print(f"Product ID: {self.product_id}")
+        print(f"Reviewer: {self.reviewer_name}")
+        print(f"Rating: {self.rating}/5")
+        print(f"Review: {self.review_text}")
+        print(f"Date: {self.review_date}")
+        print(f"Upvotes: {self.upvotes} | Downvotes: {self.downvotes}")
+        print("-" * 40)
+
+class Product:
+    def __init__(self, product_id, product_name):
+        self.product_id = product_id
+        self.product_name = product_name
+        self.reviews = []  # List to store all reviews for this product
+
+    def add_review(self, review):
+        """Add a review to the product."""
+        self.reviews.append(review)
+
+    def get_average_rating(self):
+        """Calculate the average rating for the product."""
+        if not self.reviews:
+            return 0
+        total_ratings = sum(review.rating for review in self.reviews)
+        return total_ratings / len(self.reviews)
+
+    def display_all_reviews(self):
+        """Display all reviews for the product."""
+        print(f"Product: {self.product_name} (ID: {self.product_id})")
+        print(f"Average Rating: {self.get_average_rating():.2f}/5")
+        print("Reviews:")
+        for review in self.reviews:
+            review.display_review()
+        print("=" * 40)
+
+# Example usage:
+product1 = Product("P123", "Smartphone X")
+
+review1 = Review("Alice", "Great product, very satisfied!", 5, "P123")
+review2 = Review("Bob", "Good, but could be better.", 4, "P123")
+review3 = Review("Charlie", "Not worth the price.", 2, "P123")
+
+# Add reviews to the product
+product1.add_review(review1)
+product1.add_review(review2)
+product1.add_review(review3)
+
+# Upvote and downvote reviews
+review1.upvote()
+review1.upvote()
+review2.downvote()
+
+# Display all reviews for the product
+product1.display_all_reviews()
